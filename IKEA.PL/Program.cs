@@ -1,10 +1,16 @@
+using Castle.Core.Smtp;
+using IKEA.BLL.Common.Services;
+using IKEA.BLL.Common.Services.EmailSettings;
 using IKEA.BLL.Services;
 using IKEA.BLL.Services.Employees;
+using IKEA.DAL.Models.Identity;
 using IKEA.DAL.Presistance.Data;
 using IKEA.DAL.Presistance.Repositories.Departments;
 using IKEA.DAL.Presistance.Repositories.Employees;
 using IKEA.DAL.Presistance.UnitOfWork;
 using IKEA.PL.Mapping;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 namespace IKEA.PL
 
@@ -28,6 +34,22 @@ namespace IKEA.PL
             builder.Services.AddScoped<IDepartmentService, DepartmentService>();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfile()));
+            builder.Services.AddTransient<IAttachmentService, AttachmentService>();
+			builder.Services.AddScoped<IEmailSettings,EmailSettings>();
+			builder.Services.AddIdentity<ApplicationUser, IdentityRole>((option =>
+            {
+                option.Password.RequiredLength = 5;
+                option.Password.RequireNonAlphanumeric = true; //@#*
+                option.Password.RequireUppercase = true;    
+                option.Password.RequireLowercase = true;
+                option.Lockout.AllowedForNewUsers = true;
+                option.Lockout.MaxFailedAccessAttempts = 5;
+
+            }))
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+            builder.Services.ConfigureApplicationCookie(option =>
+            option.LoginPath = "/Account/SignIn");
             #endregion
 
 
@@ -45,7 +67,7 @@ namespace IKEA.PL
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

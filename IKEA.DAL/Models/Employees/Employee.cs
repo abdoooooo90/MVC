@@ -37,6 +37,7 @@ namespace IKEA.DAL.Models.Employees
         // Set ForienKey For Department Table
         #endregion
         #endregion
+        public string? Image {  get; set; }
 
 
     }
