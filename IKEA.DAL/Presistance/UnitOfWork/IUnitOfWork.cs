@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace IKEA.DAL.Presistance.UnitOfWork
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork : IAsyncDisposable
     {
         public IEmployeeRepository EmployeeRepository { get;  }
         public IDepartmentRepository DepartmentRepository { get;  }
-        int Complete();
+        Task<int> CompleteAsync();
     }
 }

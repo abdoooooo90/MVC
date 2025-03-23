@@ -17,18 +17,18 @@ namespace IKEA.DAL.Presistance.Repositories._Generic
         {
             _dbContext = dbContext;
         }
-        public IEnumerable<T> GetAll(bool WithAsNoTracking = true)
+        public async Task<IEnumerable<T>> GetAllAsync(bool WithAsNoTracking = true)
         {
             if (WithAsNoTracking)
             {
-                return _dbContext.Set<T>().Where(x=>!x.IsDeleted).AsNoTracking().ToList();
+                return await _dbContext.Set<T>().Where(x=>!x.IsDeleted).AsNoTracking().ToListAsync();
             }
-            return _dbContext.Set<T>().Where(x => !x.IsDeleted).ToList();
+            return await _dbContext.Set<T>().Where(x => !x.IsDeleted).ToListAsync();
         }
 
-        public T? GetById(int id)
+        public async Task<T?> GetByIdAsync(int id)
         {
-            return _dbContext.Set<T>().Find(id);
+            return await _dbContext.Set<T>().FindAsync(id);
         }
         public void Add(T entity)
         {
